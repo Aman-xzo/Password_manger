@@ -1,12 +1,13 @@
 import pandas as pd
 import numpy as np
-file_path = 'private_pass.csv' # important row = 3, column = 3
-passdata = pd.read_csv(file_path, delimiter='\t')
+data_path = 'private_pass.csv' # important row = 3, column = 3
+passdata = pd.read_csv(data_path, delimiter='\t')
 passdata.columns = passdata.columns.str.strip()
 
 class passmanazer():
-    def __init__(self, safekey) -> None:
-        _safekey = str(safekey)
+    def __init__(self) -> None:
+        pass
+
     def savepass(self,your_key : str, password : str):
         your_key = str(your_key)
         password = str(password)
@@ -19,7 +20,7 @@ class passmanazer():
         }
         passdata = passdata._append(data, ignore_index = 1)
         # Write the updated DataFrame back to the CSV file
-        passdata.to_csv(file_path, sep='\t', index=False)
+        passdata.to_csv(data_path, sep='\t', index=False)
         print("saved")
 
     def getpassword(self, key : str):
@@ -43,22 +44,32 @@ class passmanazer():
 
         if (oldpass == _oldpass):
             passdata.loc[index, 'passwords'] = newpass
-            passdata.to_csv(file_path, sep='\t', index=False)
+            passdata.to_csv(data_path, sep='\t', index=False)
             print("updated")
 
         else:
             print("Wrong oldpass")
 
-    def deletepass(self, key):
-        pass
+    def deletepass(self, key:str):
+        try:
+            key = str(key)
+            index = list(passdata[passdata['key'].str.strip() == key].index)
+            if index == []:
+                raise IndexError
+            passdata.drop(index, axis='index', inplace=True)
+            passdata.to_csv(data_path, sep='\t' , index=False)
+            print("deleted")
+        except:
+            print("invalid key")
 
-        
+
+
 def main():
-    manager = passmanazer("safekey")
-    manager.savepass()
-    manager.getpassword()
-    manager.changepass()
-    manager.deletepass()
+    manager = passmanazer()
+    # manager.savepass('myke', 564686456)
+    # manager.getpassword('myke')
+    # manager.changepass('myke', 564686456, 4888888888)
+    # manager.deletepass('myke')
 
 if __name__ == "__main__":
     main()
